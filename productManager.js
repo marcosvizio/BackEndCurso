@@ -1,52 +1,122 @@
+import fs from "fs";
+
 class ProductManager {
-    constructor(){
-        this.products = []
+    constructor() {
+        this.path = "./products.json"
     }
-    addProduct = (title,description,price,thumbnail,code,stock) => {
-        const product = {
-            title,
-            description,
-            price,
-            thumbnail,
-            code,
-            stock
+
+    getProducts = async () => {
+        if (fs.existsSync(this.path)) {
+            const data = await fs.promises.readFile(this.path,'utf-8')
+            const products = JSON.parse(data)
+            return products;
         }
-        if (this.products.length===0) {
+        return [];
+    };
+
+    addProduct = async (product) => {
+
+        const products = await this.getProducts();
+
+        if (products.length === 0) {
             product.id = 1
-        }else{
-            product.id = this.products[this.products.length - 1].id + 1;
+        } else {
+            product.id = products[products.length - 1].id + 1;
         }
-        const productCode = this.products.find(product => product.code === code)
+
+        const productCode = products.find(prod => prod.code === product.code)
+
         if (productCode) {
             console.log("Error: El CODE del producto ingresado ya es utilizado en otro producto.");
-        } else {
-            console.log(`El producto: ${product.title} ha sido cargado.`)
-            this.products.push(product)
+            return null;
         }
+
+        products.push(product)
+
+        await fs.promises.writeFile(this.path, JSON.stringify(products, null, "\t"));
+
     }
-    getProducts = () => {
-        console.log(this.products);
-        return this.products;
-    }
-    getProductById = (id) => {
-        const productId = this.products.find(product => product.id === id)
+
+    getProductById = async (id) => {
+
+        const products = await this.getProducts();
+
+        const productId = products.find(product => product.id === id)
+
         if (productId) {
             console.log(productId);
             return productId;
         }else{
-            console.log("Not found!");
+            console.log("Product not found!");
         }
+
+    }
+
+    updateProduct = async (id,title,description,price,thumbnail,code,stock) => {
+
+        const products = await this.getProducts();
+
+        const productIndex = products.findIndex(product => product.id === id)
+
+        const productToUpdate = products[productIndex]
+        productToUpdate.title = title
+        productToUpdate.description = description
+        productToUpdate.price = price
+        productToUpdate.thumbnail = thumbnail
+        productToUpdate.code = code
+        productToUpdate.stock = stock
+
+        products.splice(productIndex, 1, productToUpdate)
+
+        await fs.promises.writeFile(this.path, JSON.stringify(products, null, "\t"))
+    }
+
+    deleteProduct = async (...productIds) => {
+        const products = await this.getProducts();
+
+        for (const id of productIds) {
+            const productIndex = products.findIndex((product) => product.id === id);
+            products.splice(productIndex, 1);
+            await fs.promises.writeFile(this.path,JSON.stringify(products, null, "\t"));
+        }    
     }
 }
 
-const productManager1 = new ProductManager;
+const productManager = new ProductManager;
 
-productManager1.addProduct("Pantalon","Pantalon de jean regular",5500,"pantalon.jpg",855,15);
-//El siguiente producto tiene el codigo repetido con el de arriba.
-productManager1.addProduct("Remera","Remera con estampado",3500,"remera.jpg",855,10);
-productManager1.addProduct("Campera","Campera reversible y de buen aislamiento",5000,"campera.jpg",256,5);
-productManager1.addProduct("Zapatillas","Zapatillas de running, muy comodas y de alta calidad",7000,"zapatillas.jpg",896,20);
+/* await productManager.getProducts(); */
 
-productManager1.getProducts();
+/* await productManager.updateProduct(1, 'Saco', 'Saco negro con detalles en blanco', 8500, 'saco.png', 45520, 8); */
 
-productManager1.getProductById(3);
+/* await productManager.deleteProduct() */
+
+const product1 = {
+    title: "Remera",
+    description: "Remera estampada roja",
+    price: 2500,
+    thumbnail: "remera.jpg",
+    code: 226,
+    stock: 10
+}
+
+const product2 = {
+    title: "Pantalon",
+    description: "Pantalon de jean negro",
+    price: 5500,
+    thumbnail: "pantalon.jpg",
+    code: 25587,
+    stock: 5
+}
+
+const product3 = {
+    title: "Campera",
+    description: "Campera impermeable verde militar",
+    price: 8000,
+    thumbnail: "campera.jpg",
+    code: 58664,
+    stock: 10
+}
+
+/* await productManager.addProduct(product1)
+await productManager.addProduct(product2)
+await productManager.addProduct(product3) */

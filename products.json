@@ -1,0 +1,29 @@
+[
+	{
+		"title": "Saco",
+		"description": "Saco negro con detalles en blanco",
+		"price": 8500,
+		"thumbnail": "saco.png",
+		"code": 45520,
+		"stock": 8,
+		"id": 1
+	},
+	{
+		"title": "Pantalon",
+		"description": "Pantalon de jean negro",
+		"price": 5500,
+		"thumbnail": "pantalon.jpg",
+		"code": 25587,
+		"stock": 5,
+		"id": 2
+	},
+	{
+		"title": "Campera",
+		"description": "Campera impermeable verde militar",
+		"price": 8000,
+		"thumbnail": "campera.jpg",
+		"code": 58664,
+		"stock": 10,
+		"id": 3
+	}
+]

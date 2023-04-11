@@ -1,0 +1,21 @@
+{
+  "name": "back-end-recurso",
+  "version": "1.0.0",
+  "description": "",
+  "main": "productManager.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/marcosvizio/BackEndCurso.git"
+  },
+  "keywords": [],
+  "author": "Marcos Vizio",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/marcosvizio/BackEndCurso/issues"
+  },
+  "homepage": "https://github.com/marcosvizio/BackEndCurso#readme"
+}
