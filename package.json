@@ -17,5 +17,8 @@
   "bugs": {
     "url": "https://github.com/marcosvizio/BackEndCurso/issues"
   },
-  "homepage": "https://github.com/marcosvizio/BackEndCurso#readme"
+  "homepage": "https://github.com/marcosvizio/BackEndCurso#readme",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
 }

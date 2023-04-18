@@ -1,8 +1,9 @@
+import { log } from "console";
 import fs from "fs";
 
-class ProductManager {
-    constructor() {
-        this.path = "./products.json"
+export default class ProductManager {
+    constructor(path) {
+        this.path = path
     }
 
     getProducts = async () => {
@@ -41,34 +42,29 @@ class ProductManager {
 
         const products = await this.getProducts();
 
-        const productId = products.find(product => product.id === id)
+        const productIndex = products.findIndex(prod => prod.id === id)
 
-        if (productId) {
-            console.log(productId);
-            return productId;
-        }else{
-            console.log("Product not found!");
+        if (productIndex === -1) {
+            console.log('Product not found!');
         }
 
+        const product = products[productIndex]
+        return product
     }
 
-    updateProduct = async (id,title,description,price,thumbnail,code,stock) => {
+    updateProduct = async (id, updatedFields) => {
 
         const products = await this.getProducts();
 
-        const productIndex = products.findIndex(product => product.id === id)
+        const productIndex = products.findIndex(prod => prod.id === id)
 
-        const productToUpdate = products[productIndex]
-        productToUpdate.title = title
-        productToUpdate.description = description
-        productToUpdate.price = price
-        productToUpdate.thumbnail = thumbnail
-        productToUpdate.code = code
-        productToUpdate.stock = stock
+        const productToUpdate = { ...products[productIndex], ...updatedFields }
 
-        products.splice(productIndex, 1, productToUpdate)
+        products[productIndex] = productToUpdate
 
         await fs.promises.writeFile(this.path, JSON.stringify(products, null, "\t"))
+
+        return productToUpdate;
     }
 
     deleteProduct = async (...productIds) => {
@@ -82,15 +78,13 @@ class ProductManager {
     }
 }
 
-const productManager = new ProductManager;
-
 /* await productManager.getProducts(); */
 
-/* await productManager.updateProduct(1, 'Saco', 'Saco negro con detalles en blanco', 8500, 'saco.png', 45520, 8); */
+/* await productManager.updateProduct(1,{title: 'Saco blanco', description: 'Saco blanco con detalles en negro'}) */
 
 /* await productManager.deleteProduct() */
 
-const product1 = {
+/* const product1 = {
     title: "Remera",
     description: "Remera estampada roja",
     price: 2500,
@@ -115,7 +109,7 @@ const product3 = {
     thumbnail: "campera.jpg",
     code: 58664,
     stock: 10
-}
+} */
 
 /* await productManager.addProduct(product1)
 await productManager.addProduct(product2)
