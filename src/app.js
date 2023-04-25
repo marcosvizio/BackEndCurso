@@ -1,36 +1,17 @@
 import express from 'express';
-import ProductManager from '../productManager.js'
+import * as dotenv from 'dotenv'
+dotenv.config()
+import productsRouter from './routes/products.router.js'
+import cartRouter from './routes/cart.router.js'
 
 const app = express();
 
-const productManager = new ProductManager('./products.json')
+app.use(express.json())
+app.use(express.urlencoded({extended:true}))
 
-app.get('/products', async (req,res) => {
-    try {
-        const products = await productManager.getProducts()
-        const limit = req.query.limit
-        const parseLimit = parseInt(limit)
-        if (!limit || parseLimit > products.length) {
-            res.status(200).products
-        } else {
-            res.send(products.slice(0, parseLimit))
-        }
-    } catch (err) {
-        console.log(err);
-    }
-})
+app.use('/api/products', productsRouter)
+app.use('/api/cart', cartRouter)
 
-app.get('/products/:pid', async (req, res) => {
-    try {
-        const { pid } = req.params
-        const id = parseInt(pid)
-        const productId = await productManager.getProductById(id)
-        res.status(200).json(
-            productId
-        )
-    } catch (err) {
-        console.log(err);
-    }
-})
+const PORT = process.env.PORT || 3005
 
-app.listen(8080,() => console.log('Server running on port 8080'));
+app.listen(PORT, () => console.log(`Server running on port: ${PORT}`));

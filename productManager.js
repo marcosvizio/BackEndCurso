@@ -1,4 +1,3 @@
-import { log } from "console";
 import fs from "fs";
 
 export default class ProductManager {
@@ -15,9 +14,27 @@ export default class ProductManager {
         return [];
     };
 
-    addProduct = async (product) => {
+    addProduct = async ({title,description,code,price,status,stock,category,thumbnail = []}) => {
 
         const products = await this.getProducts();
+
+        const product = {
+            title,
+            description,
+            price,
+            thumbnail,
+            code,
+            category,
+            status,
+            stock,
+        };
+    
+        const validation = Object.values(product);
+        const empty = validation.some((empty) => empty === undefined);
+        if (empty) {
+            console.log("Faltan ingresar datos!");
+            return null;
+        }
 
         if (products.length === 0) {
             product.id = 1
@@ -33,9 +50,7 @@ export default class ProductManager {
         }
 
         products.push(product)
-
         await fs.promises.writeFile(this.path, JSON.stringify(products, null, "\t"));
-
     }
 
     getProductById = async (id) => {
@@ -76,41 +91,51 @@ export default class ProductManager {
             await fs.promises.writeFile(this.path,JSON.stringify(products, null, "\t"));
         }    
     }
+
+    /* METODOS PARA EL CARRITO */
+
+    createCart = async () => {
+        const carts = await this.getProducts();
+
+        const cart = {
+            id: null,
+            products: []
+        }
+
+        if (carts.length === 0) {
+            cart.id = 1
+        } else {
+            const lastCart = carts[carts.length - 1]
+            cart.id = lastCart.id + 1
+        }
+
+        carts.push(cart)
+        await fs.promises.writeFile(this.path, JSON.stringify(carts, null, "\t"));
+    }
+
+    addProductToCart = async (cid,product) => {
+        const carts = await this.getProducts();
+        const cartUploaded = await this.getProductById(cid)
+        const cartIndex = await this.getProductById(cid);
+        const productIndex = cartUploaded.products.findIndex(prod => prod.id === product.id);
+
+        if (productIndex === -1) {
+            const productIdQuantity = {
+              id: product.id,
+              quantity: 1,
+            };
+            cartUploaded.products.push(productIdQuantity)
+        } else {
+            for (let i = 0; i < cartUploaded.products.length; i++) {
+                if (cartUploaded.products[i].id === product.id) {
+                    cartUploaded.products[i].quantity += 1;
+                }    
+            }
+        }
+
+        carts.splice(cartIndex, 1, cartUploaded);
+        await fs.promises.writeFile(this.path, JSON.stringify(carts, null, "\t"));
+    }
+
+
 }
-
-/* await productManager.getProducts(); */
-
-/* await productManager.updateProduct(1,{title: 'Saco blanco', description: 'Saco blanco con detalles en negro'}) */
-
-/* await productManager.deleteProduct() */
-
-/* const product1 = {
-    title: "Remera",
-    description: "Remera estampada roja",
-    price: 2500,
-    thumbnail: "remera.jpg",
-    code: 226,
-    stock: 10
-}
-
-const product2 = {
-    title: "Pantalon",
-    description: "Pantalon de jean negro",
-    price: 5500,
-    thumbnail: "pantalon.jpg",
-    code: 25587,
-    stock: 5
-}
-
-const product3 = {
-    title: "Campera",
-    description: "Campera impermeable verde militar",
-    price: 8000,
-    thumbnail: "campera.jpg",
-    code: 58664,
-    stock: 10
-} */
-
-/* await productManager.addProduct(product1)
-await productManager.addProduct(product2)
-await productManager.addProduct(product3) */
