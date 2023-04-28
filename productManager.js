@@ -14,7 +14,7 @@ export default class ProductManager {
         return [];
     };
 
-    addProduct = async ({title,description,code,price,status,stock,category,thumbnail = []}) => {
+    addProduct = async ({title,description,code,price,status,stock,category,thumbnails = []}) => {
 
         const products = await this.getProducts();
 
@@ -22,7 +22,7 @@ export default class ProductManager {
             title,
             description,
             price,
-            thumbnail,
+            thumbnails,
             code,
             category,
             status,
@@ -45,12 +45,13 @@ export default class ProductManager {
         const productCode = products.find(prod => prod.code === product.code)
 
         if (productCode) {
-            console.log("Error: El CODE del producto ingresado ya es utilizado en otro producto.");
+            console.log("Code identico entre productos!");
             return null;
         }
 
         products.push(product)
         await fs.promises.writeFile(this.path, JSON.stringify(products, null, "\t"));
+        return product
     }
 
     getProductById = async (id) => {
@@ -60,7 +61,7 @@ export default class ProductManager {
         const productIndex = products.findIndex(prod => prod.id === id)
 
         if (productIndex === -1) {
-            console.log('Product not found!');
+            return null
         }
 
         const product = products[productIndex]
@@ -68,74 +69,29 @@ export default class ProductManager {
     }
 
     updateProduct = async (id, updatedFields) => {
-
         const products = await this.getProducts();
 
         const productIndex = products.findIndex(prod => prod.id === id)
-
         const productToUpdate = { ...products[productIndex], ...updatedFields }
-
         products[productIndex] = productToUpdate
 
         await fs.promises.writeFile(this.path, JSON.stringify(products, null, "\t"))
-
         return productToUpdate;
     }
 
-    deleteProduct = async (...productIds) => {
+    deleteProduct = async (id) => {
         const products = await this.getProducts();
 
-        for (const id of productIds) {
-            const productIndex = products.findIndex((product) => product.id === id);
-            products.splice(productIndex, 1);
-            await fs.promises.writeFile(this.path,JSON.stringify(products, null, "\t"));
-        }    
-    }
-
-    /* METODOS PARA EL CARRITO */
-
-    createCart = async () => {
-        const carts = await this.getProducts();
-
-        const cart = {
-            id: null,
-            products: []
+        const productIndex = products.findIndex((prod) => prod.id === id);
+        
+        if (productIndex === -1 ) {
+            return null
         }
 
-        if (carts.length === 0) {
-            cart.id = 1
-        } else {
-            const lastCart = carts[carts.length - 1]
-            cart.id = lastCart.id + 1
-        }
+        products.splice(productIndex, 1);
 
-        carts.push(cart)
-        await fs.promises.writeFile(this.path, JSON.stringify(carts, null, "\t"));
+        await fs.promises.writeFile(this.path,JSON.stringify(products, null, "\t"));
+        return productIndex
     }
-
-    addProductToCart = async (cid,product) => {
-        const carts = await this.getProducts();
-        const cartUploaded = await this.getProductById(cid)
-        const cartIndex = await this.getProductById(cid);
-        const productIndex = cartUploaded.products.findIndex(prod => prod.id === product.id);
-
-        if (productIndex === -1) {
-            const productIdQuantity = {
-              id: product.id,
-              quantity: 1,
-            };
-            cartUploaded.products.push(productIdQuantity)
-        } else {
-            for (let i = 0; i < cartUploaded.products.length; i++) {
-                if (cartUploaded.products[i].id === product.id) {
-                    cartUploaded.products[i].quantity += 1;
-                }    
-            }
-        }
-
-        carts.splice(cartIndex, 1, cartUploaded);
-        await fs.promises.writeFile(this.path, JSON.stringify(carts, null, "\t"));
-    }
-
 
 }

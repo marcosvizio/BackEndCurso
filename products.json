@@ -1,29 +1,32 @@
 [
 	{
 		"title": "Saco negro",
-		"description": "Saco negro de gabardina",
-		"price": 8500,
-		"thumbnail": "saco.png",
-		"code": 45520,
-		"stock": 8,
+		"description": "Saco de gabardina negro",
+		"price": 10000,
+		"thumbnails": [
+			"saco1.jpg",
+			"saco2.jpg",
+			"saco3.jpg"
+		],
+		"code": "xdrS223Fv",
+		"category": "Sacos",
+		"status": true,
+		"stock": 10,
 		"id": 1
 	},
 	{
-		"title": "Pantalon",
-		"description": "Pantalon de jean negro",
-		"price": 5500,
-		"thumbnail": "pantalon.jpg",
-		"code": 25587,
-		"stock": 5,
+		"title": "Camisa",
+		"description": "Camisa blanca",
+		"price": 5000,
+		"thumbnails": [
+			"camisa1.jpg",
+			"camisa2.jpg",
+			"camisa3.jpg"
+		],
+		"code": "pdAW34xG",
+		"category": "Camisas",
+		"status": true,
+		"stock": 30,
 		"id": 2
-	},
-	{
-		"title": "Campera",
-		"description": "Campera impermeable verde militar",
-		"price": 8000,
-		"thumbnail": "campera.jpg",
-		"code": 58664,
-		"stock": 10,
-		"id": 3
 	}
 ]
