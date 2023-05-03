@@ -68,6 +68,8 @@ router.post('/', async (req, res) => {
                 message: 'The product is not added! Look the code or data.'
             })
         } else {
+            const products = await productManager.getProducts()
+            req.io.emit('products', products)
             res.status(200).json({
                 status: 'success',
                 message: 'Product added!',
@@ -104,6 +106,8 @@ router.delete('/:pid', async (req, res) => {
                 message: 'The product not exist to delete!'
             })
         } else {
+            const products = await productManager.getProducts();
+            req.io.emit('products', products)
             res.status(200).json({
                 status: 'success',
                 message: 'Product deleted!'

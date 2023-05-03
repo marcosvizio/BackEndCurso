@@ -1,0 +1,19 @@
+<div>
+    <h1>Home</h1>
+    <h3>Products:</h3>
+    <ul>
+        {{#if products}}
+            {{#each products}}
+                <li>
+                    <p>Product: {{this.title}}</p>
+                    <p>Description: {{this.description}}</p>
+                    <p>Price: {{this.price}}</p>
+                    <p>Images: {{this.thumbnails}}</p>
+                    <p>Stock: {{this.stock}}</p>
+                </li>
+            {{/each}}
+        {{else}}
+            <p>There are no more products in the store.</p>
+        {{/if}}
+    </ul>
+</div>

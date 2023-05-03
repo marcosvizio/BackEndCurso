@@ -28,5 +28,48 @@
 		"status": true,
 		"stock": 30,
 		"id": 2
+	},
+	{
+		"title": "Pantalon",
+		"description": "Pantalon de jean azul",
+		"price": 15000,
+		"thumbnails": [
+			"pantalon1.jpg",
+			"pantalon2.jpg",
+			"pantalon3.jpg"
+		],
+		"code": "sdas3243x",
+		"category": "Pantalones",
+		"status": true,
+		"stock": 10,
+		"id": 3
+	},
+	{
+		"title": "Buzo",
+		"description": "Buzo de polar",
+		"price": 8000,
+		"thumbnails": [
+			"buzo.jpg",
+			"buzo2.jpg"
+		],
+		"code": "uysd2113",
+		"category": "Buzos",
+		"status": true,
+		"stock": 15,
+		"id": 4
+	},
+	{
+		"title": "Bermuda",
+		"description": "Bermuda de algodon",
+		"price": 5000,
+		"thumbnails": [
+			"bermuda.jpg",
+			"bermuda2.jpg"
+		],
+		"code": "Xaer31A",
+		"category": "Bermudas",
+		"status": true,
+		"stock": 25,
+		"id": 5
 	}
 ]
