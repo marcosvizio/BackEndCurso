@@ -1,15 +1,29 @@
 import { Router } from 'express';
-import ProductManager from '../../productManager.js';
-import CartManager from '../../cartManager.js';
+import CartManager from '../dao/mongoDb/manager/Carts.js';
 
 const router = Router();
-const cartManager = new CartManager('./cart.json')
-const productManager = new ProductManager('./products.json')
+const cartServices = new CartManager();
 
-router.post('/', async (_req,res) => {
+router.get('/', async (req, res) => {
     try {
-        const cart = await cartManager.createCart()
-        res.status(200).json({
+        const carts = await cartServices.getCarts();
+        if (!carts) {
+            res.status(404).send({status: 'error', error: 'Not found carts!'})
+        }
+        res.status(200).send({status: 'success', payload: carts})
+    } catch (error) {
+        console.log(error);
+    }
+})
+
+router.post('/', async (req,res) => {
+    try {
+        const { cart } = req.body
+        const newCart = await cartServices.createCart(cart)
+        if (!newCart) {
+            res.status(404).send({status: 'error', error: 'Cart not created'})
+        }
+        res.status(200).send({
             status: 'success',
             message: 'Cart created!'
         })
@@ -21,15 +35,14 @@ router.post('/', async (_req,res) => {
 router.get("/:cid", async (req, res) => {
     try {
         const { cid } = req.params
-        const id = parseInt(cid)
-        const cartSelected = await cartManager.getCartById(id)
-        if (cartSelected == null) {
-            res.status(400).json({
+        const cartSelected = await cartServices.getCartBy({_id: cid})
+        if (!cartSelected) {
+            res.status(400).send({
                 status: 'failure',
                 message: 'The cart not exist!'
             })
         } else {
-            res.status(200).json({
+            res.status(200).send({
                 status: 'success',
                 CartSelected: cartSelected
             })
@@ -40,27 +53,30 @@ router.get("/:cid", async (req, res) => {
     }
 })
 
-router.post("/:cid/products/:pid", async (req, res) => {
+router.delete('/:cid', async (req, res) => {
     try {
         const { cid } = req.params
-        const { pid } = req.params
-        const cidParsed = parseInt(cid)
-        const pidParsed = parseInt(pid)
-        const product = await productManager.getProductById(pidParsed)
-        if (product == null) {
-            res.status(400).json({
-                status: 'failure',
-                message: 'The product not exist to add in the cart!'
-            })
-        } else {
-            await cartManager.addProductToCart(cidParsed,product);
-            res.status(200).json({
-                status: 'success',
-                message: 'Product added to cart!'
-            })
+        const cartDelete = await cartServices.deleteCart({_id: cid})
+        if (!cartDelete) {
+            res.status(404).send({status: 'error', error: 'Cart not found to delete'})
         }
-    } catch (err) {
-        console.log(err);
+        res.status(200).send({status: 'success', message: 'Cart deleted'})
+    } catch (error) {
+        console.log(error);
+    }
+})
+
+router.put("/:cid/products/:pid", async (req, res) => {
+    try{
+        const { cid } = req.params;
+        const { pid } = req.params;
+        const cart = await cartServices.addProductToCart(cid, pid);
+        if (!cart) {
+            res.status(404).send({status: 'error', error: 'Cart not found'})
+        }
+        res.status(200).send({status: 'success', payload:cart})
+    }catch(err){
+        console.log(err)
     }
 })
 

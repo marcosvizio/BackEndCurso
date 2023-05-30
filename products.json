@@ -71,5 +71,34 @@
 		"status": true,
 		"stock": 25,
 		"id": 5
+	},
+	{
+		"title": "Saco blanco",
+		"description": "Saco blanco con detalles azules",
+		"price": 20000,
+		"thumbnails": [
+			"saco.jpg",
+			"saco2.jpg"
+		],
+		"code": "XsdttY67",
+		"category": "Sacos",
+		"status": true,
+		"stock": 5,
+		"id": 6
+	},
+	{
+		"title": "Remera roja",
+		"description": "Remera roja de algodon con estampado",
+		"price": 6500,
+		"thumbnails": [
+			"remera.jpg",
+			"remera2.jpg",
+			"remera3.jpg"
+		],
+		"code": "Tss123llORs",
+		"category": "Remeras",
+		"status": true,
+		"stock": 15,
+		"id": 7
 	}
 ]

@@ -1,32 +1,32 @@
 import { Router } from 'express'
-import ProductManager from '../../productManager.js'
+import ProductManager from '../dao/mongoDb/manager/Products.js'
 
 const router = Router();
-const productManager = new ProductManager('./products.json')
+const productManager = new ProductManager();
 
 router.get('/', async (req,res) => {
     try {
         const products = await productManager.getProducts()
         const limit = req.query.limit
         if (!limit) {
-            res.status(200).json({
+            res.status(200).send({
                 status: 'success',
                 products: products
             })
         } else if (isNaN(limit)) {
-            res.status(400).json({
+            res.status(400).send({
                 status: 'failure',
                 message: "The query params 'limit' is not a number!"
             })
         } else {
             const parseLimit = parseInt(limit)
             if (parseLimit > products.length) {
-                res.status(200).json({
+                res.status(200).send({
                     status: 'success',
                     products: products
                 })
             } else {
-                res.status(200).json({
+                res.status(200).send({
                     status: 'success',
                     products: products.slice(0, parseLimit)
                 })
@@ -40,9 +40,8 @@ router.get('/', async (req,res) => {
 router.get('/:pid', async (req, res) => {
     try {
         const { pid } = req.params
-        const id = parseInt(pid)
-        const product = await productManager.getProductById(id)
-        if ( product == null ) {
+        const product = await productManager.getProductBy({_id: pid})
+        if ( !product ) {
             res.status(400).json({
                 status: 'failure',
                 message: 'The product not exist to found!'
@@ -62,15 +61,15 @@ router.post('/', async (req, res) => {
     try {
         const newProduct = req.body
         const product = await productManager.addProduct(newProduct)
-        if ( product == null ) {
-            res.status(400).json({
+        if ( !product ) {
+            res.status(400).send({
                 status: 'failure',
                 message: 'The product is not added! Look the code or data.'
             })
         } else {
             const products = await productManager.getProducts()
             req.io.emit('products', products)
-            res.status(200).json({
+            res.status(200).send({
                 status: 'success',
                 message: 'Product added!',
             })
@@ -84,8 +83,7 @@ router.put('/:pid', async (req, res) => {
     try {
         const product = req.body
         const { pid } = req.params
-        const id = parseInt(pid);
-        await productManager.updateProduct(id, product)
+        await productManager.updateProduct({_id: pid}, product)
         res.status(200).json({
             status: 'success',
             message:'Product updated successfully!'
@@ -98,9 +96,8 @@ router.put('/:pid', async (req, res) => {
 router.delete('/:pid', async (req, res) => {
     try {
         const { pid } = req.params
-        const id = parseInt(pid)
-        const product = await productManager.deleteProduct(id)
-        if (product == null) {
+        const product = await productManager.deleteProduct({_id: pid})
+        if (!product) {
             res.status(400).json({
                 status: 'failure',
                 message: 'The product not exist to delete!'

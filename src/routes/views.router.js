@@ -1,8 +1,8 @@
 import { Router } from 'express'
-import ProductManager from '../../productManager.js';
+import ProductManager from '../dao/mongoDb/manager/Products.js';
 
 const router = Router();
-const productManager = new ProductManager('./products.json')
+const productManager = new ProductManager();
 
 router.get('/', async (req, res) => {
     try {
@@ -48,6 +48,17 @@ router.get('/realtimeproducts', (_req, res) => {
         })
     } catch (err) {
         console.log(err);
+    }
+})
+
+router.get('/chat', (_req,res) => {
+    try {
+        res.status(200).render('chat', {
+            status: 'success',
+            css: 'chat'
+        })
+    } catch (error) {
+        console.log(error);
     }
 })
 
