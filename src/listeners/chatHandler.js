@@ -18,4 +18,5 @@ const registerChatHandler = (io, socket) => {
     socket.on('chat:newParticipant', newParticipant)
 }
 
+
 export default registerChatHandler;
