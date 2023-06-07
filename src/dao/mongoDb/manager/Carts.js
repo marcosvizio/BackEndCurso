@@ -1,27 +1,45 @@
 import cartModel from "../models/cart.js";
 import mongoose from "mongoose";
+import productModel from "../models/product.js";
 
 export default class CartManager {
 
     getCarts = (params) => {
-        return cartModel.find(params).lean().populate('products.product')
+        return cartModel.find(params).lean()
     }
 
     getCartBy = (params) => {
-        return cartModel.findOne(params).lean().populate('products.product')
+        return cartModel.findOne(params).lean()
     }
 
     createCart = (cart) => {
         return cartModel.create(cart)
     }
 
-    addProductToCart = async (cid, pid) => {
+    addProductToCart = async (cid, pid, quantity) => {
         const cart = await this.getCartBy({_id:cid})
-        const isInCart = cart.products.find((prod) => prod.product._id.toString() === pid)
-        if (!isInCart) {
-            return cartModel.updateOne({_id:cid}, {$push: {products:{product: new mongoose.Types.ObjectId(pid)}}})
+        const prodToAdd = cart.products.find((prod) => prod.product._id == pid)
+        if (prodToAdd) {
+            const updateProd = prodToAdd.quantity + quantity;
+            prodToAdd.quantity = updateProd
+            const updateCart = cartModel.updateOne({_id: cid}, cart)
+            return updateCart
+        }else{
+            return cartModel.findByIdAndUpdate(cid, 
+                {$push: {products: {product: new mongoose.Types.ObjectId(pid), quantity: prodQuantity}}})
+        }      
+    }
+
+    deleteProductToCart = async (cid, pid) => {
+        const cart = await this.getCartBy({_id:cid})
+        const products = cart.products;
+        const ids = products.map(prod => prod.product._id)
+        const productToDelete = ids.findIndex((id)=> id == pid);
+        if (productToDelete === -1) {
+            return null
+        }else{
+            return await cartModel.updateOne({_id:cid}, {$pull: {products: {product: pid}}})
         }
-        return cartModel.updateOne({_id:cid, products: {product: {_id: pid}}}, {$inc: {"products.$.quantity": 1}}) 
     }
 
     deleteCart=(cid)=>{

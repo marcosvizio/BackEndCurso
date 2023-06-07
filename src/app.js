@@ -8,13 +8,13 @@ dotenv.config();
 import productsRouter from './routes/products.router.js';
 import cartRouter from './routes/cart.router.js';
 import viewsRouter from './routes/views.router.js';
-import ProductManager from './dao/fileSystem/manager/productManager.js';
+import ProductManager from './dao/mongoDb/manager/Products.js';
 
 import registerChatHandler from './listeners/chatHandler.js';
 
 import __dirname from './utils.js';
 
-const productManager = new ProductManager('./products.json')
+const productManager = new ProductManager();
 
 const app = express();
 /* COMO ES CON FINES EDUCATIVOS DEJE LA CONTRASEÑA HARDCODEADA */
@@ -35,7 +35,6 @@ app.use((req, res, next) => {
 
 io.on('connection', async socket => {
     registerChatHandler(io, socket)
-    console.log('Nuevo cliente conectado!');
     const products = await productManager.getProducts();
     io.emit('products', products)
 })  

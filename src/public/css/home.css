@@ -1,3 +1,12 @@
-body{
-    background-color: bisque;
+.home{
+    margin: 0.5rem;
+}
+.productsList{
+    display: flex;
+}
+.btn_paginate{
+    border-radius: 0.3rem;
+}
+.p_paginate{
+    display: inline;
 }

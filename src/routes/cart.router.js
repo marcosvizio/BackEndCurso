@@ -4,7 +4,7 @@ import CartManager from '../dao/mongoDb/manager/Carts.js';
 const router = Router();
 const cartServices = new CartManager();
 
-router.get('/', async (req, res) => {
+router.get('/', async (_req, res) => {
     try {
         const carts = await cartServices.getCarts();
         if (!carts) {
@@ -68,15 +68,30 @@ router.delete('/:cid', async (req, res) => {
 
 router.put("/:cid/products/:pid", async (req, res) => {
     try{
-        const { cid } = req.params;
-        const { pid } = req.params;
-        const cart = await cartServices.addProductToCart(cid, pid);
+        const { cid, pid } = req.params;
+        const { quantity } = req.body;
+        const cart = await cartServices.addProductToCart(cid, pid, quantity);
         if (!cart) {
             res.status(404).send({status: 'error', error: 'Cart not found'})
+        } else {
+            res.status(200).send({status: 'success', payload:cart})
         }
-        res.status(200).send({status: 'success', payload:cart})
     }catch(err){
         console.log(err)
+    }
+})
+
+router.delete("/:cid/products/:pid", async (req, res) => {
+    try {
+        const { cid, pid } = req.params;
+        const prodDeleted = await cartServices.deleteProductToCart(cid, pid)
+        if (!prodDeleted) {
+            res.status(404).send({status: 'error', error: 'Product not found to delete'})
+        } else {
+            res.status(200).send({status: 'success', message: 'Product deleted'})
+        }
+    } catch (error) {
+        console.log(error);
     }
 })
 

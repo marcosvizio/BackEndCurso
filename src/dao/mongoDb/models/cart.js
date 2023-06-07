@@ -18,6 +18,14 @@ const schema = new mongoose.Schema({
 }, {timestamps: {createdAt: 'created_at', updated_at: 'updated_at'}
 });
 
+schema.pre('find', function(){
+    this.populate('products.product')
+})
+
+schema.pre('findOne', function(){
+    this.populate('products.product')
+})
+
 const cartModel = mongoose.model(collection, schema);
 
 export default cartModel;

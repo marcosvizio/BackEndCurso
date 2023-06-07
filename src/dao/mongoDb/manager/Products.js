@@ -1,5 +1,6 @@
 import productModel from "../models/product.js";
 
+
 export default class ProductsManager {
 
     getProducts = (params) => {
