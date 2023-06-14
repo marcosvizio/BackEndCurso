@@ -42,12 +42,12 @@ router.get('/:pid', async (req, res) => {
         const { pid } = req.params
         const product = await productManager.getProductBy({_id: pid})
         if ( !product ) {
-            res.status(400).json({
+            res.status(404).send({
                 status: 'failure',
                 message: 'The product not exist to found!'
             })
         } else {
-            res.status(200).json({
+            res.status(200).send({
                 status: 'success',
                 product: product
             })
@@ -84,7 +84,7 @@ router.put('/:pid', async (req, res) => {
         const product = req.body
         const { pid } = req.params
         await productManager.updateProduct({_id: pid}, product)
-        res.status(200).json({
+        res.status(200).send({
             status: 'success',
             message:'Product updated successfully!'
         })
@@ -98,14 +98,14 @@ router.delete('/:pid', async (req, res) => {
         const { pid } = req.params
         const product = await productManager.deleteProduct({_id: pid})
         if (!product) {
-            res.status(400).json({
+            res.status(404).send({
                 status: 'failure',
                 message: 'The product not exist to delete!'
             })
         } else {
             const products = await productManager.getProducts();
             req.io.emit('products', products)
-            res.status(200).json({
+            res.status(200).send({
                 status: 'success',
                 message: 'Product deleted!'
             })

@@ -15,8 +15,8 @@ const schema = new mongoose.Schema({
         default: true
     },
     stock: Number
-}, {timestamps: {createdAt: 'created_at', updated_at: 'updated_at'}
-});
+}, {timestamps: {createdAt: 'created_at', updated_at: 'updated_at'}}
+);
 
 schema.plugin(mongoosePaginate)
 

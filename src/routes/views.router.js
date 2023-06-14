@@ -1,11 +1,12 @@
 import { Router } from 'express'
 import productModel from '../dao/mongoDb/models/product.js';
 import CartManager from '../dao/mongoDb/manager/Carts.js';
+import { privacy } from '../middlewares/auth.js'
 
 const cartServices = new CartManager();
 const router = Router();
 
-router.get('/products', async (req, res) => {
+router.get('/products', privacy('private'),async (req, res) => {
     try {
         const { page:queryPage, limit:queryLimit, category, sort:querySort } = req.query
 
@@ -24,6 +25,7 @@ router.get('/products', async (req, res) => {
             res.status(200).render('home', {
                 status: 'success',
                 css: 'home',
+                user: req.session.user,
                 products: productsFilter,
                 hasPrevPage,
                 hasNextPage,
@@ -37,6 +39,7 @@ router.get('/products', async (req, res) => {
             res.status(200).render('home',{
                 status: 'success',
                 css: 'home',
+                user: req.session.user,
                 products: products,
                 hasPrevPage,
                 hasNextPage,
@@ -66,6 +69,28 @@ router.get('/chat', (_req,res) => {
         res.status(200).render('chat', {
             status: 'success',
             css: 'chat'
+        })
+    } catch (error) {
+        console.log(error);
+    }
+})
+
+router.get('/register', privacy('no_auth') ,(_req, res) => {
+    try {
+        res.status(200).render('register', {
+            status: 'success',
+            css: 'register'
+        })
+    } catch (error) {
+        console.log(error);
+    }
+})
+
+router.get('/login', privacy('no_auth'),(_req, res) => {
+    try {
+        res.status(200).render('login', {
+            status: 'success',
+            css: 'login'
         })
     } catch (error) {
         console.log(error);

@@ -1,5 +1,18 @@
 <div class="home">
-    <h1>Welcome to my E-Commerce</h1>
+    <div>
+    {{#if user}}
+        <h1>Welcome {{user.name}}! This is my E-Commerce</h1>
+        <input id="logoutSession" type="submit" value="Log out">
+    {{else}}
+        <h1>Hey welcome! Are you new here? This is my E-Commerce</h1>
+        <input id="loginSession" type="submit" value="Log In">
+    {{/if}}
+    <br>
+    {{#if user}}
+        <h6>You are logged in as {{user.role}}</h4>
+    {{/if}}
+    </div> 
+    
     <hr>
     <h2>Categories</h2>
     <ul>
@@ -44,7 +57,16 @@
         {{else}}
             <p>There are no more products in the store.</p>
         {{/if}}
+        <hr>
+        {{#if user}}
+            <p>We will send to your email ({{user.email}}) the latest news.</p>
+        {{else}}
+            <p>Register or log in to find out the latest news.</p>
+        {{/if}}
+        
 </div>
 
+<script src="/js/logout.js"></script>
+<script src="/js/loginProducts.js"></script>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>

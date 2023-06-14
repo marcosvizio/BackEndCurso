@@ -8,7 +8,7 @@ router.get('/', async (_req, res) => {
     try {
         const carts = await cartServices.getCarts();
         if (!carts) {
-            res.status(404).send({status: 'error', error: 'Not found carts!'})
+            res.status(404).send({status: 'error', error: 'Not found carts'})
         }
         res.status(200).send({status: 'success', payload: carts})
     } catch (error) {
@@ -21,7 +21,7 @@ router.post('/', async (req,res) => {
         const { cart } = req.body
         const newCart = await cartServices.createCart(cart)
         if (!newCart) {
-            res.status(404).send({status: 'error', error: 'Cart not created'})
+            res.status(400).send({status: 'error', error: 'Cart not created'})
         }
         res.status(200).send({
             status: 'success',
@@ -37,9 +37,9 @@ router.get("/:cid", async (req, res) => {
         const { cid } = req.params
         const cartSelected = await cartServices.getCartBy({_id: cid})
         if (!cartSelected) {
-            res.status(400).send({
+            res.status(404).send({
                 status: 'failure',
-                message: 'The cart not exist!'
+                message: 'The cart not found'
             })
         } else {
             res.status(200).send({
