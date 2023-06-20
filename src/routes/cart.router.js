@@ -53,6 +53,20 @@ router.get("/:cid", async (req, res) => {
     }
 })
 
+router.put("/:cid", async (req, res) => {
+    try {
+        const { cid } = req.params
+        const cartSelected = await cartServices.getCartByIdAndUpdate(cid)
+        if (!cartSelected) {
+            res.status(404).send({status: 'error', error:'Cart not found to update'})
+        } else {
+            res.status(200).send({status: 'success', payload: cartSelected})
+        }
+    } catch (error) {
+        console.log(error);
+    }
+})
+
 router.delete('/:cid', async (req, res) => {
     try {
         const { cid } = req.params

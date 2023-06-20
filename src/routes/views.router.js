@@ -34,7 +34,7 @@ router.get('/products', privacy('private'),async (req, res) => {
                 page:rest.page
             })
         }else{
-            const { docs, hasPrevPage, hasNextPage, prevPage, nextPage, ...rest } = await productModel.paginate({},{page, limit, lean:true});
+            const { docs, hasPrevPage, hasNextPage, prevPage, nextPage, ...rest } = await productModel.paginate({},{page, limit, lean:true, sort: {price:sort}});
             const products = docs
             res.status(200).render('home',{
                 status: 'success',

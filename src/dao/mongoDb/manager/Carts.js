@@ -1,6 +1,5 @@
 import cartModel from "../models/cart.js";
 import mongoose from "mongoose";
-import productModel from "../models/product.js";
 
 export default class CartManager {
 
@@ -10,6 +9,10 @@ export default class CartManager {
 
     getCartBy = (params) => {
         return cartModel.findOne(params).lean()
+    }
+
+    getCartByIdAndUpdate = async (cid) => {
+        return cartModel.updateOne({_id: cid}, {$set: {products: []}})
     }
 
     createCart = (cart) => {
@@ -26,7 +29,7 @@ export default class CartManager {
             return updateCart
         }else{
             return cartModel.findByIdAndUpdate(cid, 
-                {$push: {products: {product: new mongoose.Types.ObjectId(pid), quantity: prodQuantity}}})
+                {$push: {products: {product: new mongoose.Types.ObjectId(pid), quantity: quantity}}})
         }      
     }
 
@@ -43,7 +46,7 @@ export default class CartManager {
     }
 
     deleteCart=(cid)=>{
-        return cartModel.findByIdAndDelete(cid)
+        return cartModel.updateOne({_id: cid}, {$set: {products: []}})
     }
 
 }

@@ -1,34 +1,121 @@
 import { Router } from 'express'
 import ProductManager from '../dao/mongoDb/manager/Products.js'
+import productModel from '../dao/mongoDb/models/product.js';
 
 const router = Router();
 const productManager = new ProductManager();
 
 router.get('/', async (req,res) => {
     try {
-        const products = await productManager.getProducts()
-        const limit = req.query.limit
-        if (!limit) {
-            res.status(200).send({
-                status: 'success',
-                products: products
-            })
-        } else if (isNaN(limit)) {
-            res.status(400).send({
-                status: 'failure',
-                message: "The query params 'limit' is not a number!"
-            })
-        } else {
-            const parseLimit = parseInt(limit)
-            if (parseLimit > products.length) {
+        const { page:queryPage, limit:queryLimit, category, sort:querySort } = req.query
+
+        const defaultLimit = 5
+        const limit = queryLimit ? parseInt(queryLimit) : defaultLimit
+
+        const defaultPage = 1
+        const page = queryPage ? parseInt(queryPage) : defaultPage
+
+        const defaultSort = 1
+        const sort = querySort ? parseInt(querySort) : defaultSort
+
+        if (category) {
+            const { docs, hasPrevPage, hasNextPage, prevPage, nextPage, totalPages, ...rest } = await productModel.paginate({category: category}, {page, limit, lean:true, sort: {price:sort}})
+            const productsFilter = docs
+
+            if (hasPrevPage === false && hasNextPage === false) {
+                const prevLink = null;
+                const nextLink = null;
                 res.status(200).send({
                     status: 'success',
-                    products: products
+                    payload: productsFilter,
+                    totalPages,
+                    prevPage,
+                    nextPage,
+                    page: rest.page,
+                    hasPrevPage,
+                    hasNextPage,
+                    prevLink,
+                    nextLink
                 })
-            } else {
+            } else if (hasPrevPage === false) {
+                const prevLink = null;
+                const nextLink = `localhost:8080/api/products/?page=${nextPage}&category=${category}`
                 res.status(200).send({
                     status: 'success',
-                    products: products.slice(0, parseLimit)
+                    payload: productsFilter,
+                    totalPages,
+                    prevPage,
+                    nextPage,
+                    page: rest.page,
+                    hasPrevPage,
+                    hasNextPage,
+                    prevLink,
+                    nextLink
+                })
+            } else if (hasNextPage === false){
+                const prevLink = `localhost:8080/api/products/?page=${prevPage}&category=${category}`;
+                const nextLink = null;
+                res.status(200).send({
+                    status: 'success',
+                    payload: productsFilter,
+                    totalPages,
+                    prevPage,
+                    nextPage,
+                    page: rest.page,
+                    hasPrevPage,
+                    hasNextPage,
+                    prevLink,
+                    nextLink
+                })
+            }
+        }else{
+            const { docs, hasPrevPage, hasNextPage, prevPage, nextPage, totalPages, ...rest } = await productModel.paginate({},{page, limit, lean:true, sort: {price:sort}});
+            const products = docs
+
+            if (hasPrevPage === false && hasNextPage === false) {
+                const prevLink = null;
+                const nextLink = null
+                res.status(200).send({
+                    status: 'success',
+                    payload: products,
+                    totalPages,
+                    prevPage,
+                    nextPage,
+                    page: rest.page,
+                    hasPrevPage,
+                    hasNextPage,
+                    nextLink,
+                    prevLink
+                })
+            } else if (hasPrevPage === false) {
+                const prevLink = null;
+                const nextLink = `localhost:8080/api/products/?page=${nextPage}`;
+                res.status(200).send({
+                    status: 'success',
+                    payload: products,
+                    totalPages,
+                    prevPage,
+                    nextPage,
+                    page: rest.page,
+                    hasPrevPage,
+                    hasNextPage,
+                    nextLink,
+                    prevLink
+                })
+            }else if (hasNextPage === false){
+                const nextLink = null
+                const prevLink = `localhost:8080/api/products/?page=${prevPage}`
+                res.status(200).send({
+                    status: 'success',
+                    payload: products,
+                    totalPages,
+                    prevPage,
+                    nextPage,
+                    page: rest.page,
+                    hasPrevPage,
+                    hasNextPage,
+                    nextLink,
+                    prevLink
                 })
             }
         }
