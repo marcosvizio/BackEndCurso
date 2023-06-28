@@ -75,7 +75,7 @@ router.get('/chat', (_req,res) => {
     }
 })
 
-router.get('/register', privacy('no_auth') ,(_req, res) => {
+router.get('/register', privacy('no_auth'),(_req, res) => {
     try {
         res.status(200).render('register', {
             status: 'success',
@@ -91,6 +91,16 @@ router.get('/login', privacy('no_auth'),(_req, res) => {
         res.status(200).render('login', {
             status: 'success',
             css: 'login'
+        })
+    } catch (error) {
+        console.log(error);
+    }
+})
+
+router.get('/restorePassword', privacy('no_auth'), (req, res) => {
+    try {
+        res.status(200).render('restorePassword', {
+            status: 'success'
         })
     } catch (error) {
         console.log(error);

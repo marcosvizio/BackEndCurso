@@ -10,4 +10,8 @@ export default class SessionsManager {
         return sessionModel.findOne(params)
     }
 
+    updateSession = (email, password) => {
+        return sessionModel.updateOne({email}, {$set: {password: password}})
+    }
+
 }
